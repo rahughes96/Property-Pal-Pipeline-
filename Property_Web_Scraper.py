@@ -9,6 +9,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import time
 
+from zmq import HELLO_MSG
+
 
 class Scraper:
     def __init__(self, url: str = 'https://www.propertypal.com') -> None:
@@ -56,3 +58,7 @@ if __name__ == "__main__":
     bot.search_word('//*[@id="searchForm"]/div/div[1]', 'bt4')
     time.sleep(3)
     bot.search_rent()
+    time.sleep(1)
+    bot.scroll()
+
+    
