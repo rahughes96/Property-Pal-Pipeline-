@@ -58,7 +58,7 @@ if __name__ == "__main__":
     bot.search_word('//*[@id="searchForm"]/div/div[1]', 'bt4')
     time.sleep(3)
     bot.search_rent()
-    time.sleep(1)
-    bot.scroll()
+    
+    
 
     
