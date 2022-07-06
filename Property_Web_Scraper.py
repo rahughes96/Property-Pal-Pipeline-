@@ -49,6 +49,10 @@ class Scraper:
         rent = self.driver.find_element_by_xpath('//*[@id="searchForm"]/div/div[2]/button[1]')
         rent.click()
 
+    def button_click(self, xpath):
+        button = button = self.driver.find_element(By.XPATH, xpath)
+        button.click()
+
 if __name__ == "__main__":
     bot = Scraper()
     bot.accept_cookies()
@@ -56,3 +60,7 @@ if __name__ == "__main__":
     bot.search_word('//*[@id="searchForm"]/div/div[1]', 'bt4')
     time.sleep(3)
     bot.search_rent()
+    
+    
+
+    
