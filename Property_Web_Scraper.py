@@ -15,10 +15,11 @@ class Scraper:
         self.driver = Chrome(ChromeDriverManager().install())
         self.driver.get(url)
         
-    def ivan_accept_cookies(self, xpath):
-
+    def ivan_accept_cookies(self, xpath:str = '//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]'):
+        
         try:
-            WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(By.XPATH, xpath))
+            time.sleep(1)
+            WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, xpath)))
 
             button = self.driver.find_element(By.XPATH, xpath)
             button.click()
@@ -49,17 +50,21 @@ class Scraper:
         rent = self.driver.find_element_by_xpath('//*[@id="searchForm"]/div/div[2]/button[1]')
         rent.click()
 
-    def button_click(self, xpath):
-        button = button = self.driver.find_element(By.XPATH, xpath)
+    def button_click(self,xpath):
+        button = self.driver.find_element_by_xpath(xpath)
         button.click()
 
 if __name__ == "__main__":
     bot = Scraper()
-    bot.accept_cookies()
-    time.sleep(3)
+    bot.ivan_accept_cookies()
+    time.sleep(2)
     bot.search_word('//*[@id="searchForm"]/div/div[1]', 'bt4')
-    time.sleep(3)
+    time.sleep(2)
     bot.search_rent()
+    time.sleep(2)
+    bot.scroll_down()
+    bot.button_click('//*[@id="body"]/div[3]/div/div[1]/div/ul/li[1]/div/a[2]')
+
     
     
 
