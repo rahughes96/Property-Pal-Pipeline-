@@ -9,8 +9,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import time
 
-from zmq import HELLO_MSG
-
 
 class Scraper:
     def __init__(self, url: str = 'https://www.propertypal.com') -> None:
