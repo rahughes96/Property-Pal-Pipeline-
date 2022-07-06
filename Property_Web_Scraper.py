@@ -53,6 +53,10 @@ class Scraper:
     def button_click(self,xpath):
         button = self.driver.find_element_by_xpath(xpath)
         button.click()
+    
+    def find_container(self, xpath: str = '//*[@id="body"]/div[3]/div/div[1]/div/ul'):
+        self.container = self.driver.find_element(By.XPATH, xpath)
+        return self.container
 
 if __name__ == "__main__":
     bot = Scraper()
@@ -62,9 +66,7 @@ if __name__ == "__main__":
     time.sleep(2)
     bot.search_rent()
     time.sleep(2)
-    bot.scroll_down()
-    bot.button_click('//*[@id="body"]/div[3]/div/div[1]/div/ul/li[1]/div/a[2]')
-
+    bot.find_container()
     
     
 
