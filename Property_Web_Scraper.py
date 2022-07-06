@@ -66,8 +66,25 @@ if __name__ == "__main__":
     time.sleep(2)
     bot.search_rent()
     time.sleep(2)
-    bot.find_container()
-    
+    print("Finding container")
+    container = bot.find_container()
+    print("Finding elements")
+    items = container.find_elements(By.XPATH, './li')
+    list_links = []
+
+    for i in items:
+        try:
+            house = i.find_element(By.XPATH, './/a')
+            link = house.get_attribute('href')
+            list_links.append(link)
+        except:
+            print('No href found, skipping this property')
+    print(list_links)
+    for link in list_links:
+        time.sleep(3)
+        bot.driver.get(link)
+
+
     
 
     
