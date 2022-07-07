@@ -2,9 +2,11 @@
 AiCore project 2
 
 **Milestone 1**
+
 The webpage I chose to scrape is PropertyPal.com, a platform to view local properties for sale and rent. By using the selenium package and Webdriver, PropertyPal has a vast quantity of retrievable data. Every property has a host of information we can scrape including location, size, No. of bedrooms etc. Having recently moved home this seemed like an enjoyable way to build my first data pipeline.
 
 **Milestone 2**
+
 _Task 1 & 2_
 
 Before starting to build the scraper, some modules need to be imported. These were added to as and when needed.
@@ -28,6 +30,7 @@ Now that that the beginings of the class have been built, an instance of the cla
 This loads the webpage in chrome.
 
 _Task 3_
+
 Accepting cookies is the first hurdle to jump when scraping PropertyPal. Intiially using the time module and using sleep(2), this gave the webdriver enough time to let the webpage load, then finding the "accept cookies" button's xpath, used the driver.click(xpath). However I chose to change to the more robust method of WebDriverWait wih the expected conditions (EC). This way the driver would wait until such an xpath was found, instead of waiting for an explicit amount of time and then looking.
 
 This was wrapped in a "try" and "except" whereby if no "accept cookies" was found it will throw us an error. The method's argument was set to default as the xpath of the given "accept cookies" button.
