@@ -61,7 +61,15 @@ Once the container was found, an empty list was created, then using a "for" loop
 
 <img width="403" alt="Screenshot 2022-07-07 at 13 32 24" src="https://user-images.githubusercontent.com/102994234/177774099-c04f8ea1-7b51-4492-8b14-3cc5428494b0.png">
 
+Then for each link, we appended this to our empty list, resulting in a list of all the links we needed for that page.
+
 <img width="480" alt="Screenshot 2022-07-07 at 13 33 15" src="https://user-images.githubusercontent.com/102994234/177774198-61ec20d6-dbaf-4381-b284-8909dd361402.png">
 
- 
+_Task 5_
+
+By running the entire body of code through an "if __name__ == __main__" statement, we prevent the code from automatically running if we want to iherit any of the methods we use in our Scraper class in a different file. The final block of code for our scraper looks as follows.
+
+<img width="745" alt="Screenshot 2022-07-07 at 13 37 46" src="https://user-images.githubusercontent.com/102994234/177775126-1430491b-0063-4916-8293-0ecf87fd9d44.png">
+
+This opens the webpage, accepts the cookies, searches "BT4" in the rentals category, then grabs all the links from all the properties shown on that page and stores them in the list "list_links".
 
