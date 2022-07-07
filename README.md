@@ -37,9 +37,31 @@ This was wrapped in a "try" and "except" whereby if no "accept cookies" was foun
 
 <img width="749" alt="Screenshot 2022-07-07 at 11 35 28" src="https://user-images.githubusercontent.com/102994234/177754145-c72672c9-2489-4add-80e5-248d72cd1d96.png">
 
+_Task 4_
 
+In order to eventually get the links to the pages where the required details can be found, a few more methods were added to the Scraper class. The first one being the search bar.
 
+Initially tried another simple button.click() from selenium, however it required a sturdier method to find and click the button, and send keys. I found ActionChains, a more advanced version of the actions you can do with selenium, to work. This paired with seleniums ImplicitlyWait method allowed for the search bar to be found and typed into.
 
+<img width="726" alt="Screenshot 2022-07-07 at 11 44 32" src="https://user-images.githubusercontent.com/102994234/177755671-5a135c3e-15a5-43b2-a83e-8afd5f2a9006.png">
 
+Instead of a normal search bar, PropertyPal has either "Rent" or "Buy" as its search buttons, so a method was created to click both, although we will most likely focus on just rentals.
 
+<img width="714" alt="Screenshot 2022-07-07 at 11 55 32" src="https://user-images.githubusercontent.com/102994234/177757556-3889aa04-5a75-47f1-bf20-ff6aee6c3f53.png">
+
+In order to find the container with all the information required, we need to examine the html code of the website. I found that all the links were inside a "ul" and each were in the daughter tags "li".
+
+<img width="289" alt="Screenshot 2022-07-07 at 11 59 57" src="https://user-images.githubusercontent.com/102994234/177758312-7566ce0e-f763-4735-a971-2940c4cc7c18.png">
+
+I used the following method, with the default argument as the xpath for the said "ul" tag, in order to store our container.
+
+<img width="612" alt="Screenshot 2022-07-07 at 12 01 51" src="https://user-images.githubusercontent.com/102994234/177758616-3b1cec59-0448-48ef-8e6b-46571bcc0486.png">
+
+Once the container was found, an empty list was created, then using a "for" loop, the container was iterated through to grab the "a" tag and then extract the "href" which we can see in the html code, lies the links we require.
+
+<img width="403" alt="Screenshot 2022-07-07 at 13 32 24" src="https://user-images.githubusercontent.com/102994234/177774099-c04f8ea1-7b51-4492-8b14-3cc5428494b0.png">
+
+<img width="480" alt="Screenshot 2022-07-07 at 13 33 15" src="https://user-images.githubusercontent.com/102994234/177774198-61ec20d6-dbaf-4381-b284-8909dd361402.png">
+
+ 
 
