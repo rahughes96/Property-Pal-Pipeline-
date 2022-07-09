@@ -62,6 +62,16 @@ if __name__ == "__main__":
     bot = Scraper()
     bot.ivan_accept_cookies()
     time.sleep(2)
+    bot.button_click('//a[@href="/login"]')
+    time.sleep(2)
+    bot.search_word('//input[@placeholder="Email address"]','sopranotony233@gmail.com')
+    time.sleep(2)
+    bot.search_word('//input[@placeholder="Password"]','sopranotony321')
+    time.sleep(2)
+    bot.button_click('//*[@id="root"]/div/div/div/div/div/div[1]/div/div[2]/div[2]/form/button')
+    time.sleep(2)
+    bot.button_click('//a[@class="mainnav-logo"]')  
+    time.sleep(2)
     bot.search_word('//*[@id="searchForm"]/div/div[1]', 'bt4')
     time.sleep(2)
     bot.search_rent()
@@ -74,7 +84,7 @@ if __name__ == "__main__":
 
     for i in items:
         try:
-            house = i.find_element(By.XPATH, './/a')
+            house = i.find_element(By.XPATH, './/a[2]')
             link = house.get_attribute('href')
             list_links.append(link)
         except:
