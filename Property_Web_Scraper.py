@@ -62,6 +62,7 @@ if __name__ == "__main__":
     bot = Scraper()
     bot.ivan_accept_cookies()
     time.sleep(2)
+ Milestone-3
     bot.button_click('//a[@href="/login"]')
     time.sleep(2)
     bot.search_word('//input[@placeholder="Email address"]','sopranotony233@gmail.com')
@@ -72,6 +73,7 @@ if __name__ == "__main__":
     time.sleep(2)
     bot.button_click('//a[@class="mainnav-logo"]')  
     time.sleep(2)
+ main
     bot.search_word('//*[@id="searchForm"]/div/div[1]', 'bt4')
     time.sleep(2)
     bot.search_rent()
@@ -84,7 +86,11 @@ if __name__ == "__main__":
 
     for i in items:
         try:
+ Milestone-3
             house = i.find_element(By.XPATH, './/a[2]')
+
+            house = i.find_element(By.XPATH, './/a')
+main
             link = house.get_attribute('href')
             list_links.append(link)
         except:
@@ -92,4 +98,13 @@ if __name__ == "__main__":
     print(list_links)
     for link in list_links:
         time.sleep(3)
+ Milestone-3
         bot.driver.get(link)
+
+        bot.driver.get(link)
+
+
+    
+
+    
+main
