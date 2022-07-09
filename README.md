@@ -57,13 +57,13 @@ I used the following method, with the default argument as the xpath for the said
 
 <img width="612" alt="Screenshot 2022-07-07 at 12 01 51" src="https://user-images.githubusercontent.com/102994234/177758616-3b1cec59-0448-48ef-8e6b-46571bcc0486.png">
 
-Once the container was found, an empty list was created, then using a "for" loop, the container was iterated through to grab the "a" tag and then extract the "href" which we can see in the html code, lies the links we require.
+Once the container was found, an empty list was created, then, using a "for" loop, the container was iterated through to grab the "a" tag and then extract the "href" which we can see in the html code, lies the links we require.
 
 <img width="403" alt="Screenshot 2022-07-07 at 13 32 24" src="https://user-images.githubusercontent.com/102994234/177774099-c04f8ea1-7b51-4492-8b14-3cc5428494b0.png">
 
 Then for each link, we appended this to our empty list, resulting in a list of all the links we needed for that page.
 
-<img width="480" alt="Screenshot 2022-07-07 at 13 33 15" src="https://user-images.githubusercontent.com/102994234/177774198-61ec20d6-dbaf-4381-b284-8909dd361402.png">
+<img width="519" alt="Screenshot 2022-07-09 at 10 54 42" src="https://user-images.githubusercontent.com/102994234/178100827-f97a0415-7288-4850-80c9-8ad45f4b46f6.png">
 
 _Task 5_
 
