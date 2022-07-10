@@ -90,6 +90,19 @@ if __name__ == "__main__":
         except:
             print('No href found, skipping this property')
     print(list_links)
+    prop_dict = {"Link": [],
+             "Summary": [],
+            "Address": []
+            }
     for link in list_links:
-        time.sleep(3)
         bot.driver.get(link)
+        prop_dict["Link"].append(link)
+        time.sleep(1)
+        summary = bot.driver.find_element(By.XPATH, '//div[@class="prop-heading-brief"]')
+        prop_dict["Summary"].append(summary.text)
+        time.sleep(1)
+        info = bot.driver.find_element(By.XPATH, '//div[@class="prop-summary-row"]')
+        address = info.find_element(By.XPATH, './/h1')
+        prop_dict["Address"].append(address.text)
+        time.sleep(1)
+        print(prop_dict)
