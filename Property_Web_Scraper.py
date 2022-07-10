@@ -60,6 +60,10 @@ class Scraper:
         self.container = self.driver.find_element(By.XPATH, xpath)
         return self.container
 
+##
+# NAVIGATE THE WEBSITE
+##
+
 if __name__ == "__main__":
     bot = Scraper()
     bot.ivan_accept_cookies()
@@ -78,13 +82,12 @@ if __name__ == "__main__":
     time.sleep(2)
     bot.search_rent()
     time.sleep(2)
-    print("Finding container")
-    container = bot.find_container()
-    print("Finding elements")
-    items = container.find_elements(By.XPATH, './li')
-    list_links = []
+    
 
+    #CREATE THE LIST OF LINKS
+    list_links = []
     while True:
+        print("Finding elements...")
         container = bot.find_container()
         items = container.find_elements(By.XPATH, './li')
         for i in items:
@@ -100,6 +103,8 @@ if __name__ == "__main__":
         except NoSuchElementException:
             print("end of list")
             break
+
+    #GRAB INFO FROM EACH LINK AND STORE
 
     prop_dict = {"Link": [],
              "Summary": [],
@@ -118,7 +123,7 @@ if __name__ == "__main__":
         prop_dict["Address"].append(address.text)
         time.sleep(1)
         price = bot.driver.find_element(By.XPATH, '//div[@class="prop-price"]')
-        prop_dict["Price"].append(price)
+        prop_dict["Price"].append(price.text)
 
-    print(prop_dict)
-    pd.DataFrame(prop_dict)
+    df = pd.DataFrame(prop_dict)
+    df
