@@ -103,7 +103,8 @@ if __name__ == "__main__":
 
     prop_dict = {"Link": [],
              "Summary": [],
-            "Address": []
+            "Address": [],
+            "Price": []
             }
     for link in list_links:
         bot.driver.get(link)
@@ -116,6 +117,8 @@ if __name__ == "__main__":
         address = info.find_element(By.XPATH, './/h1')
         prop_dict["Address"].append(address.text)
         time.sleep(1)
+        price = bot.driver.find_element(By.XPATH, '//div[@class="prop-price"]')
+        prop_dict["Price"].append(price)
 
     print(prop_dict)
     pd.DataFrame(prop_dict)
