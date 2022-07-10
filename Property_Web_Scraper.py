@@ -1,5 +1,6 @@
 import selenium
 from selenium import webdriver
+import pandas as pd
 from selenium.webdriver import Chrome
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
@@ -83,22 +84,22 @@ if __name__ == "__main__":
     items = container.find_elements(By.XPATH, './li')
     list_links = []
 
-while True:
-    container = bot.find_container()
-    items = container.find_elements(By.XPATH, './li')
-    for i in items:
+    while True:
+        container = bot.find_container()
+        items = container.find_elements(By.XPATH, './li')
+        for i in items:
+            try:
+                house = i.find_element(By.XPATH, './/a[2]')
+                link = house.get_attribute('href')
+                list_links.append(link)
+            except:
+                print('No href found, skipping this property')
+        
         try:
-            house = i.find_element(By.XPATH, './/a[2]')
-            link = house.get_attribute('href')
-            list_links.append(link)
-        except:
-            print('No href found, skipping this property')
-    
-    try:
-        bot.button_click('//a[@class="btn paging-next"]')
-    except NoSuchElementException:
-        print("end of list")
-        break
+            bot.button_click('//a[@class="btn paging-next"]')
+        except NoSuchElementException:
+            print("end of list")
+            break
 
     prop_dict = {"Link": [],
              "Summary": [],
@@ -117,3 +118,4 @@ while True:
         time.sleep(1)
 
     print(prop_dict)
+    pd.DataFrame(prop_dict)
