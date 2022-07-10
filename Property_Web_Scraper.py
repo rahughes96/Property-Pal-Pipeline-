@@ -7,6 +7,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import NoSuchElementException
 import time
 
 
@@ -82,6 +83,9 @@ if __name__ == "__main__":
     items = container.find_elements(By.XPATH, './li')
     list_links = []
 
+while True:
+    container = bot.find_container()
+    items = container.find_elements(By.XPATH, './li')
     for i in items:
         try:
             house = i.find_element(By.XPATH, './/a[2]')
@@ -89,7 +93,13 @@ if __name__ == "__main__":
             list_links.append(link)
         except:
             print('No href found, skipping this property')
-    print(list_links)
+    
+    try:
+        bot.button_click('//a[@class="btn paging-next"]')
+    except NoSuchElementException:
+        print("end of list")
+        break
+
     prop_dict = {"Link": [],
              "Summary": [],
             "Address": []
@@ -105,5 +115,5 @@ if __name__ == "__main__":
         address = info.find_element(By.XPATH, './/h1')
         prop_dict["Address"].append(address.text)
         time.sleep(1)
-        
+
     print(prop_dict)
