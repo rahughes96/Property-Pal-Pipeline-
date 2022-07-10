@@ -105,4 +105,5 @@ if __name__ == "__main__":
         address = info.find_element(By.XPATH, './/h1')
         prop_dict["Address"].append(address.text)
         time.sleep(1)
-        print(prop_dict)
+        
+    print(prop_dict)
