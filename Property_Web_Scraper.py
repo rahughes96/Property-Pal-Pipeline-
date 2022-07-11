@@ -86,8 +86,8 @@ if __name__ == "__main__":
 
     #CREATE THE LIST OF LINKS
     list_links = []
+    print("Finding elements...")
     while True:
-        print("Finding elements...")
         container = bot.find_container()
         items = container.find_elements(By.XPATH, './li')
         for i in items:
@@ -106,12 +106,19 @@ if __name__ == "__main__":
 
     #GRAB INFO FROM EACH LINK AND STORE
 
-    prop_dict = {"Link": [],
+    prop_dict = {"fr-id": [],
+            "id": [],
+            "Link": [],
              "Summary": [],
             "Address": [],
             "Price": []
             }
     for link in list_links:
+        im = link[-6:]
+        im2 = link[28:35]
+        prop_dict["fr-id"].append(im2+im)
+        id = uuid.uuid4()
+        prop_dict["id"].append(id)
         bot.driver.get(link)
         prop_dict["Link"].append(link)
         time.sleep(1)
@@ -126,4 +133,3 @@ if __name__ == "__main__":
         prop_dict["Price"].append(price.text)
 
     df = pd.DataFrame(prop_dict)
-    df
