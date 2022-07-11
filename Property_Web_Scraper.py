@@ -1,4 +1,5 @@
 import selenium
+import uuid
 from selenium import webdriver
 import pandas as pd
 from selenium.webdriver import Chrome
