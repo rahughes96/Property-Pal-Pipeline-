@@ -1,5 +1,4 @@
 import selenium
-import uuid
 from selenium import webdriver
 import pandas as pd
 from selenium.webdriver import Chrome
@@ -34,12 +33,12 @@ class Scraper:
         button.click()
 
     
-    def search_word(self, xpath, text):
+    def search_word(self, xpath, Postcode = "BT4"):
 
         search = self.driver.find_element(By.XPATH, xpath)
         self.driver.implicitly_wait(10)
         ActionChains(self.driver).move_to_element(search).click(search).perform()
-        ActionChains(self.driver).send_keys(text).perform()
+        ActionChains(self.driver).send_keys(Postcode).perform()
 
     def scroll_down(self):
         
@@ -79,7 +78,7 @@ if __name__ == "__main__":
     time.sleep(2)
     bot.button_click('//a[@class="mainnav-logo"]')  
     time.sleep(2)
-    bot.search_word('//*[@id="searchForm"]/div/div[1]', 'bt4')
+    bot.search_word('//*[@id="searchForm"]/div/div[1]', 'BT4')
     time.sleep(2)
     bot.search_rent()
     time.sleep(2)
@@ -96,8 +95,18 @@ if __name__ == "__main__":
                 house = i.find_element(By.XPATH, './/a[2]')
                 link = house.get_attribute('href')
                 list_links.append(link)
+                time.sleep(1)
+                container_2= bot.driver.find_element(By.XPATH, '//div[@class="Slideshow-slides SlideshowCarousel"]')
+                items_2 = container_2.find_elements(By.XPATH, './/img')
+                img_links = []
+                for i in items_2:
+                    try:
+                        link = i.get_attribute('src')
+                        img_links.append(link)
+                    except:
+                        print('No src found')
             except:
-                print('No href found, skipping this property')
+                pass
         
         try:
             bot.button_click('//a[@class="btn paging-next"]')
@@ -112,7 +121,8 @@ if __name__ == "__main__":
             "Link": [],
              "Summary": [],
             "Address": [],
-            "Price": []
+            "Price": [],
+            "Image links": []
             }
     for link in list_links:
         im = link[-6:]
@@ -132,5 +142,23 @@ if __name__ == "__main__":
         time.sleep(1)
         price = bot.driver.find_element(By.XPATH, '//div[@class="prop-price"]')
         prop_dict["Price"].append(price.text)
+        prop_dict["Image links"].append(img_links)
+
+
+    Postcode = "BT4"
+    os.mkdir(f"/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/Property_Photos/{Postcode}")
+    image_directory = os.path.dirname(f"/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/Property_Photos/{Postcode}/")
+    img_link_ct=0
+    for i in prop_dict["Image links"]:
+        img_link_ct += 1
+        img_ct = 0
+        for url in i:
+            
+            img_ct += 1
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            with open(f"{image_directory}/{prop_dict['fr-id'][img_link_ct]}_{str(img_ct)}.jpg", "wb") as f:
+                with urllib.request.urlopen(req) as r:
+                    f.write(r.read())
 
     df = pd.DataFrame(prop_dict)
+    df
