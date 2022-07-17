@@ -14,6 +14,8 @@ import uuid
 import os
 import urllib
 import json
+from json import JSONEncoder
+from uuid import UUID
 
 
 class Scraper:
@@ -163,10 +165,19 @@ if __name__ == "__main__":
                     with urllib.request.urlopen(req) as r:
                         f.write(r.read())
             except IndexError:
-                pass
+                pass 
 
-    os.mkdir("/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/raw_data")
+    old_default = JSONEncoder.default
+
+    def new_default(self, obj):
+        if isinstance(obj, UUID):
+            return str(obj)
+        return old_default(self, obj)
+
+    JSONEncoder.default = new_default
+ 
     with open('/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/raw_data/data.json', 'w') as f:
         json.dump(prop_dict, f)
 
-df = pd.DataFrame(prop_dict)
+    df = pd.DataFrame(prop_dict)
+
