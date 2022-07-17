@@ -13,6 +13,7 @@ import time
 import uuid
 import os
 import urllib
+import json
 
 
 class Scraper:
@@ -163,5 +164,9 @@ if __name__ == "__main__":
                         f.write(r.read())
             except IndexError:
                 pass
+
+    os.mkdir("/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/raw_data")
+    with open('/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/raw_data/data.json', 'w') as f:
+        json.dump(prop_dict, f)
 
 df = pd.DataFrame(prop_dict)
