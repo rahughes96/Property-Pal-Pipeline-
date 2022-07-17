@@ -13,9 +13,6 @@ import time
 import uuid
 import os
 import urllib
-import json
-from json import JSONEncoder
-from uuid import UUID
 
 
 class Scraper:
@@ -39,7 +36,7 @@ class Scraper:
         button.click()
 
     
-    def search_word(self, xpath, Postcode = "BT3"):
+    def search_word(self, xpath, Postcode = "BT4"):
 
         search = self.driver.find_element(By.XPATH, xpath)
         self.driver.implicitly_wait(10)
@@ -92,6 +89,7 @@ if __name__ == "__main__":
 
     #CREATE THE LIST OF LINKS
     list_links = []
+    img_links = []
     print("Finding elements...")
     while True:
         container = bot.find_container()
@@ -101,17 +99,31 @@ if __name__ == "__main__":
                 house = i.find_element(By.XPATH, './/a[2]')
                 link = house.get_attribute('href')
                 list_links.append(link)
-            except:
-                print("no href found")
+                time.sleep(1)
+                print('looking for container')
+                container_2= bot.driver.find_element(By.XPATH, '//div[@class="Slideshow-slides SlideshowCarousel"]')
+                print('found container')
+                items_2 = container_2.find_elements(By.XPATH, './/img')
+                print('found items')
+                for i in items_2:
+                    try:
+                        link = i.get_attribute('src')
+                        img_links.append(link)
+                    except:
+                        print('No src found')
+            except NoSuchElementException:
+                print('No element found')
+            except Exception as e:
+                print(e)
         
         try:
             bot.button_click('//a[@class="btn paging-next"]')
         except NoSuchElementException:
-            print("end of list")
+            print("No more pages")
             break
 
     #GRAB INFO FROM EACH LINK AND STORE
-
+    print("gathering info...")
     prop_dict = {"fr-id": [],
             "id": [],
             "Link": [],
@@ -138,15 +150,18 @@ if __name__ == "__main__":
         time.sleep(1)
         price = bot.driver.find_element(By.XPATH, '//div[@class="prop-price"]')
         prop_dict["Price"].append(price.text)
+        print('looking for container')
         container_2= bot.driver.find_element(By.XPATH, '//div[@class="Slideshow-slides SlideshowCarousel"]')
+        print('found container')
         items_2 = container_2.find_elements(By.XPATH, './/img')
-        img_links = []
+        print('found items')
         for i in items_2:
             try:
                 link = i.get_attribute('src')
                 img_links.append(link)
             except:
                 print('No src found')
+        
         prop_dict["Image links"].append(img_links)
 
 
@@ -165,19 +180,7 @@ if __name__ == "__main__":
                     with urllib.request.urlopen(req) as r:
                         f.write(r.read())
             except IndexError:
-                pass 
+                pass
 
-    old_default = JSONEncoder.default
-
-    def new_default(self, obj):
-        if isinstance(obj, UUID):
-            return str(obj)
-        return old_default(self, obj)
-
-    JSONEncoder.default = new_default
- 
-    with open('/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/raw_data/data.json', 'w') as f:
-        json.dump(prop_dict, f)
-
-    df = pd.DataFrame(prop_dict)
-
+df = pd.DataFrame(prop_dict)
+df
