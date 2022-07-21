@@ -17,6 +17,8 @@ import json
 from json import JSONEncoder
 from uuid import UUID
 
+global Postcode
+Postcode = "BT4"
 
 class Scraper:
     def __init__(self, url: str = 'https://www.propertypal.com') -> None:
@@ -39,12 +41,12 @@ class Scraper:
         button.click()
 
     
-    def search_word(self, xpath, Postcode = "BT3"):
+    def search_word(self, xpath, pc = Postcode):
 
         search = self.driver.find_element(By.XPATH, xpath)
         self.driver.implicitly_wait(10)
         ActionChains(self.driver).move_to_element(search).click(search).perform()
-        ActionChains(self.driver).send_keys(Postcode).perform()
+        ActionChains(self.driver).send_keys(pc).perform()
 
     def scroll_down(self):
         
@@ -111,7 +113,7 @@ if __name__ == "__main__":
             break
 
     #GRAB INFO FROM EACH LINK AND STORE
-
+    print("Grabbing info...")
     prop_dict = {"fr-id": [],
             "id": [],
             "Link": [],
@@ -150,7 +152,6 @@ if __name__ == "__main__":
         prop_dict["Image links"].append(img_links)
 
 
-    Postcode = "BT3"
     os.mkdir(f"/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/Property_Photos/{Postcode}")
     image_directory = os.path.dirname(f"/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/Property_Photos/{Postcode}/")
     img_link_ct=0
