@@ -94,23 +94,29 @@ if __name__ == "__main__":
 
     #CREATE THE LIST OF LINKS
     list_links = []
-    print("Finding elements...")
+    link_container = []
+    container_holder = []
     while True:
+        container_holder = []
         container = bot.find_container()
-        items = container.find_elements(By.XPATH, './li')
-        for i in items:
-            try:
-                house = i.find_element(By.XPATH, './/a[2]')
-                link = house.get_attribute('href')
-                list_links.append(link)
-            except:
-                print("no href found")
-        
+        container_holder = container.find_elements(By.XPATH, './li//a[2]')
+        link_container += container_holder
         try:
             bot.button_click('//a[@class="btn paging-next"]')
         except NoSuchElementException:
-            print("end of list")
-            break
+            print("end of pages")
+            break  
+
+            
+    for link_element in link_container:
+        try:
+            link = link_element.get_attribute('href')
+            list_links.append(link)
+        except:
+            print("no href found")
+
+    print(link_container)
+    print(list_links)
 
     #GRAB INFO FROM EACH LINK AND STORE
     print("Grabbing info...")
@@ -140,16 +146,18 @@ if __name__ == "__main__":
         time.sleep(1)
         price = bot.driver.find_element(By.XPATH, '//div[@class="prop-price"]')
         prop_dict["Price"].append(price.text)
-        container_2= bot.driver.find_element(By.XPATH, '//div[@class="Slideshow-slides SlideshowCarousel"]')
-        items_2 = container_2.find_elements(By.XPATH, './/img')
-        img_links = []
-        for i in items_2:
-            try:
-                link = i.get_attribute('src')
-                img_links.append(link)
-            except:
-                print('No src found')
-        prop_dict["Image links"].append(img_links)
+        img_list = []
+        img_container = bot.driver.find_elements(By.XPATH, '//div[@class="Slideshow-slides SlideshowCarousel"]//img')
+        img_list += img_container
+
+    img_links = []
+    for img in img_list:
+        try:
+            link = img.get_attribute('src')
+            img_links.append(link)
+        except:
+            print('No src found')
+    prop_dict["Image links"].append(img_links)
 
 
     os.mkdir(f"/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/Property_Photos/{Postcode}")
@@ -177,7 +185,7 @@ if __name__ == "__main__":
 
     JSONEncoder.default = new_default
  
-    with open('/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/raw_data/data.json', 'w') as f:
+    with open(f'/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/raw_data/{Postcode}.json', 'w') as f:
         json.dump(prop_dict, f)
 
     df = pd.DataFrame(prop_dict)
