@@ -94,29 +94,23 @@ if __name__ == "__main__":
 
     #CREATE THE LIST OF LINKS
     list_links = []
-    link_container = []
-    container_holder = []
+    print("Finding elements...")
     while True:
-        container_holder = []
         container = bot.find_container()
-        container_holder = container.find_elements(By.XPATH, './li//a[2]')
-        link_container += container_holder
+        items = container.find_elements(By.XPATH, './li')
+        for i in items:
+            try:
+                house = i.find_element(By.XPATH, './/a[2]')
+                link = house.get_attribute('href')
+                list_links.append(link)
+            except:
+                print("no href found")
+        
         try:
             bot.button_click('//a[@class="btn paging-next"]')
         except NoSuchElementException:
-            print("end of pages")
-            break  
-
-            
-    for link_element in link_container:
-        try:
-            link = link_element.get_attribute('href')
-            list_links.append(link)
-        except:
-            print("no href found")
-
-    print(link_container)
-    print(list_links)
+            print("end of list")
+            break
 
     #GRAB INFO FROM EACH LINK AND STORE
     print("Grabbing info...")
