@@ -27,7 +27,7 @@ class Scraper:
         self.driver = Chrome(ChromeDriverManager().install())
         self.driver.get(url)
         
-    def ivan_accept_cookies(self, xpath:str = '//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]'):
+    def accept_cookies(self, xpath:str = '//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]'):
 
         """
 
@@ -122,7 +122,7 @@ class Scraper:
 
 if __name__ == "__main__":
     bot = Scraper()
-    bot.ivan_accept_cookies()
+    bot.accept_cookies()
     time.sleep(2)
     bot.button_click('//a[@href="/login"]')
     time.sleep(2)
