@@ -130,37 +130,36 @@ if __name__ == "__main__":
         prop_dict["id"].append(id)
         bot.driver.get(link)
         prop_dict["Link"].append(link)
-        time.sleep(1)
+        time.sleep(0.5)
         summary = bot.driver.find_element(By.XPATH, '//div[@class="prop-heading-brief"]')
         prop_dict["Summary"].append(summary.text)
-        time.sleep(1)
+        time.sleep(0.5)
         info = bot.driver.find_element(By.XPATH, '//div[@class="prop-summary-row"]')
         address = info.find_element(By.XPATH, './/h1')
         prop_dict["Address"].append(address.text)
-        time.sleep(1)
+        time.sleep(0.5)
         price = bot.driver.find_element(By.XPATH, '//div[@class="prop-price"]')
         prop_dict["Price"].append(price.text)
-        img_list = []
-        img_container = bot.driver.find_elements(By.XPATH, '//div[@class="Slideshow-slides SlideshowCarousel"]//img')
-        img_list += img_container
+        img_list = bot.driver.find_elements(By.XPATH, '//div[@class="Slideshow-slides SlideshowCarousel"]//img')
+        img_links = []
 
-    img_links = []
-    for img in img_list:
-        try:
-            link = img.get_attribute('src')
-            img_links.append(link)
-        except:
-            print('No src found')
-    prop_dict["Image links"].append(img_links)
+        
+        for img in img_list:
+            try:
+                link = img.get_attribute('src')
+                img_links.append(link)
+            except:
+                print('No src found')
+        prop_dict["Image links"].append(img_links)
 
 
     os.mkdir(f"/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/Property_Photos/{Postcode}")
     image_directory = os.path.dirname(f"/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/Property_Photos/{Postcode}/")
-    img_link_ct=0
-    for i in prop_dict["Image links"]:
+    img_link_ct= -1
+    for img_list in prop_dict["Image links"]:
         img_link_ct += 1
         img_ct = 0
-        for url in i:
+        for url in img_list:
             try:
                 img_ct += 1
                 req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -180,7 +179,7 @@ if __name__ == "__main__":
     JSONEncoder.default = new_default
  
     with open(f'/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/raw_data/{Postcode}.json', 'w') as f:
-        json.dump(prop_dict, f)
+        json.dump(prop_dict, f, indent = 4)
 
     df = pd.DataFrame(prop_dict)
 
