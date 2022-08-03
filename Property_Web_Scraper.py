@@ -138,7 +138,8 @@ if __name__ == "__main__":
     time.sleep(2)
     bot.search_rent()
     time.sleep(2)
-    
+
+    expected_prop_ct = int(bot.driver.find_element(By.XPATH, '//strong[@class="f-red"]').text)
 
 #CREATE THE LIST OF LINKS
 
