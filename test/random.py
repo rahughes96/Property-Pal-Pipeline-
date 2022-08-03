@@ -1,0 +1,3 @@
+import Property_Web_Scraper
+
+Property_Web_Scraper.Scraper()
