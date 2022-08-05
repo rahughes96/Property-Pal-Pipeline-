@@ -1,6 +1,4 @@
-import selenium
-from selenium import webdriver
-import pandas as pd
+import time
 from selenium.webdriver import Chrome
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
@@ -8,14 +6,6 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-from selenium.common.exceptions import NoSuchElementException
-import time
-import uuid
-import os
-import urllib
-import json
-from json import JSONEncoder
-from uuid import UUID
 
 global Postcode
 Postcode = "BT1"
@@ -23,23 +13,31 @@ Postcode = "BT1"
 #DEFINE CLASS AND FUNCTIONS
 
 class Scraper:
-    def __init__(self, url: str = 'https://www.propertypal.com') -> None:
+    def __init__(self, url: str = 'https://www.propertypal.com', accept_cookies_xpath: str = '//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]'):
+        """
+
+        This function logs in to the given URL and accepts the cookies prompt
+
+        Attributes:
+            url (str): The url of given website 
+            xpath (str): The xpath of the "accept cookies" button
+        
+        """
+        
         self.driver = Chrome(ChromeDriverManager().install())
         self.driver.get(url)
+        try:
+            WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, accept_cookies_xpath)))
+
+            button = self.driver.find_element(By.XPATH, accept_cookies_xpath)
+            button.click()
+        except TimeoutException:
+            print("No Cookies Found")
         
     def accept_cookies(self, xpath:str = '//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]'):
 
-        """
 
-        This function accepts the cookies prompt
-
-        Attributes:
-            xpath (str): the xpath of the "accept cookies" button
-        
-        """
-        
         try:
-            time.sleep(1)
             WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, xpath)))
 
             button = self.driver.find_element(By.XPATH, xpath)
@@ -65,30 +63,9 @@ class Scraper:
         self.driver.implicitly_wait(10)
         ActionChains(self.driver).move_to_element(search).click(search).perform()
         ActionChains(self.driver).send_keys(pc).perform() 
-    
-    def search_rent(self):
 
-        """
-        
-        This function clicks the "Rent" search button
-        
-        """
 
-        rent = self.driver.find_element_by_xpath('//*[@id="searchForm"]/div/div[2]/button[2]')
-        rent.click()
-
-    def search_sale(self):
-
-        """
-        
-        This function clicks the "Sale" search button
-        
-        """
-
-        sale = self.driver.find_element_by_xpath('//*[@id="searchForm"]/div/div[2]/button[1]')
-        sale.click()
-
-    def button_click(self,xpath):
+    def button_click(self, xpath):
 
         """
 
@@ -113,5 +90,5 @@ class Scraper:
 
         """
 
-        self.container = self.driver.find_element(By.XPATH, xpath)
-        return self.container
+        container = self.driver.find_element(By.XPATH, xpath)
+        return container
