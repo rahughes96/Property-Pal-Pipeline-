@@ -57,13 +57,13 @@ I used the following method, with the default argument as the xpath for the said
 
 <img width="612" alt="Screenshot 2022-07-07 at 12 01 51" src="https://user-images.githubusercontent.com/102994234/177758616-3b1cec59-0448-48ef-8e6b-46571bcc0486.png">
 
-Once the container was found, an empty list was created, then using a "for" loop, the container was iterated through to grab the "a" tag and then extract the "href" which we can see in the html code, lies the links we require.
+Once the container was found, an empty list was created, then, using a "for" loop, the container was iterated through to grab the "a" tag and then extract the "href" which we can see in the html code, lies the links we require.
 
 <img width="403" alt="Screenshot 2022-07-07 at 13 32 24" src="https://user-images.githubusercontent.com/102994234/177774099-c04f8ea1-7b51-4492-8b14-3cc5428494b0.png">
 
 Then for each link, we appended this to our empty list, resulting in a list of all the links we needed for that page.
 
-<img width="480" alt="Screenshot 2022-07-07 at 13 33 15" src="https://user-images.githubusercontent.com/102994234/177774198-61ec20d6-dbaf-4381-b284-8909dd361402.png">
+<img width="519" alt="Screenshot 2022-07-09 at 10 54 42" src="https://user-images.githubusercontent.com/102994234/178100827-f97a0415-7288-4850-80c9-8ad45f4b46f6.png">
 
 _Task 5_
 
@@ -73,3 +73,58 @@ By running the entire body of code through an "if __name__ == __main__" statemen
 
 This opens the webpage, accepts the cookies, searches "BT4" in the rentals category, then grabs all the links from all the properties shown on that page and stores them in the list "list_links".
 
+**Milestone 3**
+
+_Task 1_
+
+Thw information that seemed the most valueble was the address of each prperty, summary of the property (type, how many bedrooms), the price of the property per month and a few images. Firstly, a dictionary was created, each of the values being empty lists, each of the keys a title.
+
+<img width="228" alt="Screenshot 2022-07-17 at 12 19 20" src="https://user-images.githubusercontent.com/102994234/179395721-1049720d-8f88-4813-8f7b-2d09e6701e7e.png">
+
+The information, excluding the images, could be gathered effectively just using the xpaths in a single stroke. Once the information was located, it was appended to the afformentioned dictionary and wrapped in a for loop iterating through each of the property links.
+
+<img width="607" alt="Screenshot 2022-07-17 at 12 17 00" src="https://user-images.githubusercontent.com/102994234/179395619-bc0d8122-a8e0-4c45-9f26-2fd806abd96d.png">
+
+For the images we needed a step further. In order to get multiple images from each property link, a nested for loop was used, iterating through the a container within the webpage. We wanted to attain the attribute 'src' whihc has the image link.
+
+<img width="708" alt="Screenshot 2022-07-17 at 12 25 09" src="https://user-images.githubusercontent.com/102994234/179395866-821c64e9-4c38-4c48-aa8f-da2076b59f13.png">
+
+_Task 2 & 3_
+
+In order to determine a unique id for each property, we needed to look at the url itself initally, and find a number or sequence that would make it identifiable for a computer, and append it with something that made it easier for us to id it. I used index slicing and the .append() method to achieve this.
+
+<img width="252" alt="Screenshot 2022-07-17 at 12 30 22" src="https://user-images.githubusercontent.com/102994234/179396042-24e9a87f-e6eb-470a-afd5-25d2bddc1a6a.png">
+
+Since the link itself had both the address and a unique id number, it was convenient to grab these and add them together.
+
+To generate a globally unique id, we had to use the uuid package and generate a v4 UUID and attatch it to each property.
+
+<img width="283" alt="Screenshot 2022-07-17 at 12 35 58" src="https://user-images.githubusercontent.com/102994234/179396270-3444ded8-dde1-48c1-a35d-513b58b8c36e.png">
+
+_Task 4_
+
+Now that all the information is gathered and we can properly identify each property, we can append this all to our dictionary with empty lists as values. This is done using a for nested for loop, first loop to gather the text information, second to grab all the images.
+
+<img width="739" alt="Screenshot 2022-07-17 at 12 47 34" src="https://user-images.githubusercontent.com/102994234/179396692-6a72730d-9ed5-4533-8dea-84b2fa0287e9.png">
+
+_Task 5_
+
+Having a dictionary that contains everything is a useful thing, however on the off chance that something goes wrong and the computer crashes or deletes it accidentally, all the valueble information will be lost. To prevent this, we have to save all the raw data in a seperate json file.
+
+<img width="721" alt="Screenshot 2022-07-17 at 12 55 00" src="https://user-images.githubusercontent.com/102994234/179396988-c0883c36-51be-4b3d-8ab8-acb51cc9e060.png">
+
+This however through up an error that reported "uuid is not json serialisable". This was fixed using the following block of code.
+
+<img width="272" alt="Screenshot 2022-07-17 at 12 57 50" src="https://user-images.githubusercontent.com/102994234/179397111-855040bc-a81c-408d-8b61-4229aea26050.png">
+
+_Task 6_
+
+So in our dictionary we have all the info, however we still only have the image links, we want to download and store the images. We first made a directory to save our pictures, and named this "Property_Photos"
+
+<img width="882" alt="Screenshot 2022-07-17 at 13 03 16" src="https://user-images.githubusercontent.com/102994234/179397342-eb7fa8bd-7306-4765-bc09-5574f99607b6.png">
+
+We then looped through each of the image links and downloaded the photos and saved them in a file that corresponds to their postcode, in this case "BT3"
+
+<img width="795" alt="Screenshot 2022-07-17 at 13 04 27" src="https://user-images.githubusercontent.com/102994234/179397392-e136975a-90d8-48f8-acee-62f6d19cab16.png">
+
+img_ct was used to number each image so we could distinguish multiple images for one property. We also needed another nested loop in order to loop through the links for each property, and gather the images for each link. A try and except method meant we werent getting the error message for when the dictionary ran out of links.
