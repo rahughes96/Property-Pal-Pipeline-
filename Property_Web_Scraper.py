@@ -24,6 +24,14 @@ class PropertyScraper(Scraper):
         self.scraper = Scraper() 
 
     def login(self):
+
+        """
+
+        This function logs in to the given URL and accepts the cookies prompt
+
+        
+        """
+
         self.scraper.button_click('//a[@href="/login"]')
         self.scraper.search_word('//input[@placeholder="Email address"]','sopranotony233@gmail.com')
         self.scraper.search_word('//input[@placeholder="Password"]','sopranotony321')
@@ -44,6 +52,14 @@ class PropertyScraper(Scraper):
 
 #We first find the container with which the links for each page are located, in the form of href
     def get_links(self):
+
+        """
+
+        This function grabs all the links from each property and stores them in a list
+
+        
+        """
+
         list_links = []
         print("Finding elements...")
         while True:
@@ -69,6 +85,17 @@ class PropertyScraper(Scraper):
 #We now iterate through our list of links, and grab our desired info, and store it into a dictionary.
 
     def get_info(self, list_links):
+
+        """
+
+        This function takes the list of links and grabs all the desired information and stores 
+        them in a dictionary
+
+        Attributes:
+            list_links (list): list of all the property links  
+        
+        """
+        self._list_links = list_links
         print("Grabbing info...")
         prop_dict = {"fr-id": [],
                 "id": [],
@@ -115,6 +142,17 @@ class PropertyScraper(Scraper):
 #We store the images in a seperate folder
 
     def download_images(self, my_dict):
+        """
+
+        This function takes the dictionary and slices out the photo links from it, downloads
+        the images and stores them in a seperate file.
+
+        Attributes:
+            my_dict (dict): Dictionary of all the information scraped from our given website.
+        
+        """
+
+        self._my_dict = my_dict
         os.mkdir(f"/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/Property_Photos/{Postcode}")
         image_directory = os.path.dirname(f"/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/Property_Photos/{Postcode}/")
         img_link_ct= -1
@@ -136,6 +174,16 @@ class PropertyScraper(Scraper):
 #We take our dictionary and save it as a json file in a seperate folder
 
     def store_data(self, my_dict):
+        """
+
+        This function takes the dictionary and stores the information in a json file
+
+        Attributes:
+            my_dict (dict): Dictionary of all the information scraped from our given website.
+        
+        """
+        self._my_dict = my_dict
+
         old_default = JSONEncoder.default
 
         def new_default(self, obj):
@@ -149,20 +197,4 @@ class PropertyScraper(Scraper):
         df = pd.DataFrame(my_dict)
         return df
 
-if __name__ == "__main__":
-    print("lets go")
-    bot = PropertyScraper()
-    print('starting..')
-    bot.login()
-    print('log in?')
-    list_links = bot.get_links()
-    print(list_links)
-    print(len(list_links))
-    print("links attained?")
-    my_dict = bot.get_info(list_links)
-    print("info Attained?")
-    bot.download_images(my_dict)
-    print("images downloaded?")
-    bot.store_data(my_dict)
-    print("data Stored?")
-    print("finished")
+
