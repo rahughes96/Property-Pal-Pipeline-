@@ -1,19 +1,12 @@
-import selenium
-from selenium import webdriver
-import pandas as pd
-from selenium.webdriver import Chrome
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-from selenium.common.exceptions import NoSuchElementException
 import time
 import uuid
 import os
 import urllib
 import json
+import pandas as pd
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
+
 from json import JSONEncoder
 from uuid import UUID
 from Scraper import Scraper
@@ -27,26 +20,30 @@ Postcode = "BT1"
 
 class PropertyScraper(Scraper):
 
-    def __init__(self, url: str = 'https://www.propertypal.com', headless: bool = False):
-        super().__init__(url, headless)
+    def __init__(self, url: str = 'https://www.propertypal.com'):
+        self.scraper = Scraper() 
 
-    def login(self, bot = Scraper()):
-        bot 
-        bot.accept_cookies()
+    def login(self):
+
+        """
+
+        This function logs in to the given URL and accepts the cookies prompt
+
+        
+        """
+
+        self.scraper.button_click('//a[@href="/login"]')
+        self.scraper.search_word('//input[@placeholder="Email address"]','sopranotony233@gmail.com')
+        self.scraper.search_word('//input[@placeholder="Password"]','sopranotony321')
+        enter_button = self.scraper.driver.find_element_by_xpath('//*[@id="root"]/div/div/div/div/div/div[1]/div/div[2]/div[2]/form/button')
+        enter_button.click()
         time.sleep(2)
-        bot.button_click('//a[@href="/login"]')
+        logo = self.scraper.driver.find_element_by_xpath('//a[@class="mainnav-logo"]')
+        logo.click() 
+        self.scraper.search_word('//*[@id="searchForm"]/div/div[1]')
         time.sleep(2)
-        bot.search_word('//input[@placeholder="Email address"]','sopranotony233@gmail.com')
-        time.sleep(2)
-        bot.search_word('//input[@placeholder="Password"]','sopranotony321')
-        time.sleep(2)
-        bot.button_click('//*[@id="root"]/div/div/div/div/div/div[1]/div/div[2]/div[2]/form/button')
-        time.sleep(2)
-        bot.button_click('//a[@class="mainnav-logo"]')  
-        time.sleep(2)
-        bot.search_word('//*[@id="searchForm"]/div/div[1]')
-        time.sleep(2)
-        bot.search_rent()
+        rent_button = self.scraper.driver.find_element_by_xpath('//*[@id="searchForm"]/div/div[2]/button[2]')
+        rent_button.click()
         time.sleep(2)
 
     
@@ -54,11 +51,19 @@ class PropertyScraper(Scraper):
 #CREATE THE LIST OF LINKS
 
 #We first find the container with which the links for each page are located, in the form of href
-    def get_links(self, bot = Scraper):
+    def get_links(self):
+
+        """
+
+        This function grabs all the links from each property and stores them in a list
+
+        
+        """
+
         list_links = []
         print("Finding elements...")
         while True:
-            container = bot.find_container(self)
+            container = self.scraper.find_container()
             items = container.find_elements(By.XPATH, './li')
             for i in items:
                 try:
@@ -69,17 +74,28 @@ class PropertyScraper(Scraper):
                     print("no href found")
             
             try:
-                Scraper.button_click('//a[@class="btn paging-next"]')
+                self.scraper.button_click('//a[@class="btn paging-next"]')
             except NoSuchElementException:
                 print("end of list")
                 break
-            return list_links
+        return list_links
 
 #GRAB INFO FROM EACH LINK AND STORE
 
 #We now iterate through our list of links, and grab our desired info, and store it into a dictionary.
 
-    def get_info(self):
+    def get_info(self, list_links):
+
+        """
+
+        This function takes the list of links and grabs all the desired information and stores 
+        them in a dictionary
+
+        Attributes:
+            list_links (list): list of all the property links  
+        
+        """
+        self._list_links = list_links
         print("Grabbing info...")
         prop_dict = {"fr-id": [],
                 "id": [],
@@ -89,25 +105,25 @@ class PropertyScraper(Scraper):
                 "Price": [],
                 "Image links": []
                 }
-        for link in PropertyScraper.get_links():
-            im = link[-6:]
-            im2 = link[28:35]
-            prop_dict["fr-id"].append(im2+im)
+        for link in list_links:
+            id_pt_1 = link[-6:]
+            id_pt_2 = link[28:35]
+            prop_dict["fr-id"].append(id_pt_1+id_pt_2)
             id = uuid.uuid4()
             prop_dict["id"].append(id)
-            Scraper.driver.get(link)
+            self.scraper.driver.get(link)
             prop_dict["Link"].append(link)
             time.sleep(0.5)
-            summary = Scraper.driver.find_element(By.XPATH, '//div[@class="prop-heading-brief"]')
+            summary = self.scraper.driver.find_element(By.XPATH, '//div[@class="prop-heading-brief"]')
             prop_dict["Summary"].append(summary.text)
             time.sleep(0.5)
-            info = Scraper.driver.find_element(By.XPATH, '//div[@class="prop-summary-row"]')
+            info = self.scraper.driver.find_element(By.XPATH, '//div[@class="prop-summary-row"]')
             address = info.find_element(By.XPATH, './/h1')
             prop_dict["Address"].append(address.text)
             time.sleep(0.5)
-            price = Scraper.driver.find_element(By.XPATH, '//div[@class="prop-price"]')
+            price = self.scraper.driver.find_element(By.XPATH, '//div[@class="prop-price"]')
             prop_dict["Price"].append(price.text)
-            img_list = Scraper.driver.find_elements(By.XPATH, '//div[@class="Slideshow-slides SlideshowCarousel"]//img')
+            img_list = self.scraper.driver.find_elements(By.XPATH, '//div[@class="Slideshow-slides SlideshowCarousel"]//img')
             img_links = []
 
             
@@ -119,13 +135,24 @@ class PropertyScraper(Scraper):
                     print('No src found')
             prop_dict["Image links"].append(img_links)
             df = pd.DataFrame(prop_dict)
-            return prop_dict
+        return prop_dict
 
 #GRAB, DOWNLOAD AND STORE IMAGES
 
 #We store the images in a seperate folder
 
     def download_images(self, my_dict):
+        """
+
+        This function takes the dictionary and slices out the photo links from it, downloads
+        the images and stores them in a seperate file.
+
+        Attributes:
+            my_dict (dict): Dictionary of all the information scraped from our given website.
+        
+        """
+
+        self._my_dict = my_dict
         os.mkdir(f"/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/Property_Photos/{Postcode}")
         image_directory = os.path.dirname(f"/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/Property_Photos/{Postcode}/")
         img_link_ct= -1
@@ -147,24 +174,27 @@ class PropertyScraper(Scraper):
 #We take our dictionary and save it as a json file in a seperate folder
 
     def store_data(self, my_dict):
+        """
+
+        This function takes the dictionary and stores the information in a json file
+
+        Attributes:
+            my_dict (dict): Dictionary of all the information scraped from our given website.
+        
+        """
+        self._my_dict = my_dict
+
         old_default = JSONEncoder.default
 
         def new_default(self, obj):
+
             if isinstance(obj, UUID):
                 return str(obj)
             return old_default(self, obj)
-
         JSONEncoder.default = new_default
-    
-        with open(f'/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/raw_data/{Postcode}.json', 'w') as f:
-            json.dump(my_dict, f, indent = 4)
 
+        with open(f'/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/raw_data/{Postcode}.json', 'w') as f:json.dump(my_dict, f, indent = 4)
         df = pd.DataFrame(my_dict)
         return df
 
-if __name__ == "__main__":
-    PropertyScraper.login(Scraper)
-    PropertyScraper.get_links(Scraper)
-    PropertyScraper.get_info(Scraper, PropertyScraper.get_links())
-    PropertyScraper.download_images(Scraper, PropertyScraper.get_info())
-    PropertyScraper.store_data(Scraper, PropertyScraper.get_info())
+
