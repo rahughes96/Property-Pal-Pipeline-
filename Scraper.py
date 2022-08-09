@@ -33,17 +33,7 @@ class Scraper:
             button.click()
         except TimeoutException:
             print("No Cookies Found")
-        
-    def accept_cookies(self, xpath:str = '//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]'):
 
-
-        try:
-            WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, xpath)))
-
-            button = self.driver.find_element(By.XPATH, xpath)
-            button.click()
-        except TimeoutException:
-            print("No Cookies Found")
 
     
     def search_word(self, xpath, pc = Postcode):
@@ -63,7 +53,17 @@ class Scraper:
         self.driver.implicitly_wait(10)
         ActionChains(self.driver).move_to_element(search).click(search).perform()
         ActionChains(self.driver).send_keys(pc).perform() 
+        
+    def accept_cookies(self, xpath:str = '//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]'):
 
+
+        try:
+            WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, xpath)))
+
+            button = self.driver.find_element(By.XPATH, xpath)
+            button.click()
+        except TimeoutException:
+            print("No Cookies Found")
 
     def button_click(self, xpath):
 
