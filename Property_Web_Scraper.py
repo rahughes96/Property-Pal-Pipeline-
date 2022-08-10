@@ -12,7 +12,7 @@ from uuid import UUID
 from Scraper import Scraper
 
 global Postcode
-Postcode = "BT1"
+Postcode = input("Please enter the postcode you would like to scrape:")
 
 # NAVIGATE THE WEBSITE
 
