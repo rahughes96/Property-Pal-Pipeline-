@@ -128,3 +128,10 @@ We then looped through each of the image links and downloaded the photos and sav
 <img width="795" alt="Screenshot 2022-07-17 at 13 04 27" src="https://user-images.githubusercontent.com/102994234/179397392-e136975a-90d8-48f8-acee-62f6d19cab16.png">
 
 img_ct was used to number each image so we could distinguish multiple images for one property. We also needed another nested loop in order to loop through the links for each property, and gather the images for each link. A try and except method meant we werent getting the error message for when the dictionary ran out of links.
+
+
+**Milestone 4**
+
+_Task 1_
+
+
