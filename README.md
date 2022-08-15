@@ -132,6 +132,26 @@ img_ct was used to number each image so we could distinguish multiple images for
 
 **Milestone 4**
 
-_Task 1_
+_Task 1 & 2_
 
+Refactoring and optimising code is a constant process throughout the building of the code, This comesin many forms including reducing the number of nested for loops and reducing the big O notaition.
 
+By adding docstrings to Each of my functions, it makes the code more readable and thus more reusable to myself and others if I wish to collaborate.
+
+_Task 3_
+
+For two of my public methods, I tested the code was working by checking that an element, that I knew only appeared if the code was executed properly, was there.
+
+For the get_links method, I wanted to check that I had the correct number of links, so I matched this with the number thats stated on the website itself to the length of the list I had attained.
+
+![Screenshot 2022-08-15 at 12 18 13](https://user-images.githubusercontent.com/102994234/184626079-735af40b-6df0-4974-beb2-5c7009a134a2.png)
+
+_Task 4 & 5_
+
+These testing methods were stored in a file named Test_Scraper.py and ran through a If __name__="__main__" statement.
+
+![Screenshot 2022-08-15 at 12 21 31](https://user-images.githubusercontent.com/102994234/184626483-02a42a8c-2074-4c68-967c-c042ab98e8f3.png)
+
+I then used the "python -m test.Test_Scraper" call in my terminal to run the test and checked that all my tests were passing.
+
+**Milestone 5**
