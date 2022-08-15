@@ -8,7 +8,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
 global Postcode
-Postcode = "BT1"
 
 #DEFINE CLASS AND FUNCTIONS
 
@@ -36,7 +35,7 @@ class Scraper:
 
 
     
-    def search_word(self, xpath, pc = Postcode):
+    def search_word(self, xpath, pc):
 
         """
 
@@ -79,7 +78,7 @@ class Scraper:
         button = self.driver.find_element_by_xpath(xpath)
         button.click()
     
-    def find_container(self, xpath: str = '//*[@id="body"]/div[3]/div/div[1]/div/ul'):
+    def find_container(self, xpath: str = '//*[@id="main"]/div[1]/div[4]/div[1]/ul'):
 
         """
         

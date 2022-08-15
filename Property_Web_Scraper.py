@@ -32,19 +32,22 @@ class PropertyScraper(Scraper):
         
         """
 
-        self.scraper.button_click('//a[@href="/login"]')
+        self.scraper.button_click('//*[@id="__next"]/div[1]/nav[1]/li/button')
+        time.sleep(0.5)
+        self.scraper.button_click('//*[@id="__next"]/div[1]/nav[1]/li/ul/li[1]/a')
+        time.sleep(0.5)
         self.scraper.search_word('//input[@placeholder="Email address"]','sopranotony233@gmail.com')
         self.scraper.search_word('//input[@placeholder="Password"]','sopranotony321')
-        enter_button = self.scraper.driver.find_element_by_xpath('//*[@id="root"]/div/div/div/div/div/div[1]/div/div[2]/div[2]/form/button')
+        enter_button = self.scraper.driver.find_element_by_xpath('//*[@id="tabs--1--panel--0"]/div/div[2]/form/div[3]/button')
         enter_button.click()
         time.sleep(2)
-        logo = self.scraper.driver.find_element_by_xpath('//a[@class="mainnav-logo"]')
+        logo = self.scraper.driver.find_element_by_xpath('//*[@id="__next"]/div[1]/nav[1]/a')
         logo.click() 
-        self.scraper.search_word('//*[@id="searchForm"]/div/div[1]')
+        self.scraper.search_word('//*[@id="main"]/div[1]/div/div[15]/form/div[1]/input', Postcode)
         time.sleep(2)
-        rent_button = self.scraper.driver.find_element_by_xpath('//*[@id="searchForm"]/div/div[2]/button[2]')
+        rent_button = self.scraper.driver.find_element_by_xpath('//*[@id="main"]/div[1]/div/div[15]/form/div[2]/button[2]')
         rent_button.click()
-        time.sleep(2)
+        time.sleep(0.5)
 
     
 
@@ -67,14 +70,14 @@ class PropertyScraper(Scraper):
             items = container.find_elements(By.XPATH, './li')
             for i in items:
                 try:
-                    house = i.find_element(By.XPATH, './/a[2]')
+                    house = i.find_element(By.XPATH, './/a')
                     link = house.get_attribute('href')
                     list_links.append(link)
                 except:
                     print("no href found")
             
             try:
-                self.scraper.button_click('//a[@class="btn paging-next"]')
+                self.scraper.button_click('//a[@aria-label="next page"]')
             except NoSuchElementException:
                 print("end of list")
                 break
@@ -114,16 +117,15 @@ class PropertyScraper(Scraper):
             self.scraper.driver.get(link)
             prop_dict["Link"].append(link)
             time.sleep(0.5)
-            summary = self.scraper.driver.find_element(By.XPATH, '//div[@class="prop-heading-brief"]')
+            summary = self.scraper.driver.find_element(By.XPATH, '//p[@class="typography__Text-sc-11tz8h0-4 ghGziD"]')
             prop_dict["Summary"].append(summary.text)
             time.sleep(0.5)
-            info = self.scraper.driver.find_element(By.XPATH, '//div[@class="prop-summary-row"]')
-            address = info.find_element(By.XPATH, './/h1')
+            address = self.scraper.driver.find_element(By.XPATH, '//*[@id="main"]/div[2]/div[2]/div[2]/div/div[1]/div[1]/h1')
             prop_dict["Address"].append(address.text)
             time.sleep(0.5)
-            price = self.scraper.driver.find_element(By.XPATH, '//div[@class="prop-price"]')
+            price = self.scraper.driver.find_element(By.XPATH, '//*[@id="main"]/div[2]/div[2]/div[2]/div/div[1]/div[1]/p[3]/span/strong')
             prop_dict["Price"].append(price.text)
-            img_list = self.scraper.driver.find_elements(By.XPATH, '//div[@class="Slideshow-slides SlideshowCarousel"]//img')
+            img_list = self.scraper.driver.find_elements(By.XPATH, '//div[@class="swiper-wrapper"]//img[1]')
             img_links = []
 
             
@@ -133,6 +135,7 @@ class PropertyScraper(Scraper):
                     img_links.append(link)
                 except:
                     print('No src found')
+            img_links = list(set(img_links))
             prop_dict["Image links"].append(img_links)
             df = pd.DataFrame(prop_dict)
         return prop_dict

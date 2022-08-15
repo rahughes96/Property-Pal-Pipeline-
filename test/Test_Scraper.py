@@ -13,40 +13,47 @@ class TestScraper(unittest.TestCase):
     def test_accept_cookies(self):
         self.bot.accept_cookies()
         
-        self.bot.driver.find_element(By.XPATH, '//a[@class="mainnav-logo"]')
+        self.bot.driver.find_element(By.XPATH, '//*[@id="__next"]/div[1]/nav[1]/a')
 
-    def test_login(self):
-        self.bot.button_click('//a[@href="/login"]')
+    def test_login(self, Postcode = "bt1"):
+        self.bot.button_click('//*[@id="__next"]/div[1]/nav[1]/li/button')
+        time.sleep(0.5)
+        self.bot.button_click('//*[@id="__next"]/div[1]/nav[1]/li/ul/li[1]/a')
+        time.sleep(0.5)
         self.bot.search_word('//input[@placeholder="Email address"]','sopranotony233@gmail.com')
         self.bot.search_word('//input[@placeholder="Password"]','sopranotony321')
-        enter_button = self.bot.driver.find_element_by_xpath('//*[@id="root"]/div/div/div/div/div/div[1]/div/div[2]/div[2]/form/button')
+        enter_button = self.bot.driver.find_element_by_xpath('//*[@id="tabs--1--panel--0"]/div/div[2]/form/div[3]/button')
         enter_button.click()
         time.sleep(2)
-        logo = self.bot.driver.find_element_by_xpath('//a[@class="mainnav-logo"]')
+        logo = self.bot.driver.find_element_by_xpath('//*[@id="__next"]/div[1]/nav[1]/a')
         logo.click() 
-        self.bot.search_word('//*[@id="searchForm"]/div/div[1]')
+        self.bot.search_word('//input[@data-testid="searchInput"]', Postcode)
         time.sleep(2)
-        rent_button = self.bot.driver.find_element_by_xpath('//*[@id="searchForm"]/div/div[2]/button[2]')
+        rent_button = self.bot.driver.find_element_by_xpath('//button[@data-testid="forSaleButton"]')
         rent_button.click()
-        self.bot.driver.find_element(By.XPATH, '//div[@class="maxwidth"]')
+        time.sleep(0.5)
+        self.bot.driver.find_element(By.XPATH, '//button[@data-testid="saveThisSearch"]')
 
     def test_get_links(self):
         self.bot.driver.get("https://www.propertypal.com/property-to-rent/bt3")
-        expected_prop_ct = int(self.bot.driver.find_element(By.XPATH, '//strong[@class="f-red"]').text)
+        self.bot.accept_cookies()
+        time.sleep(2)
+        expected_prop_ct = int(self.bot.driver.find_element(By.XPATH, '//strong[@class="typography__Bold-sc-11tz8h0-9 gCJJgH"]').text)
         list_links = []
+        print("Finding elements...")
         while True:
-            container = self.bot.driver.find_element(By.XPATH, '//*[@id="body"]/div[3]/div/div[1]/div/ul')
+            container = self.bot.find_container()
             items = container.find_elements(By.XPATH, './li')
             for i in items:
                 try:
-                    house = i.find_element(By.XPATH, './/a[2]')
+                    house = i.find_element(By.XPATH, './/a')
                     link = house.get_attribute('href')
                     list_links.append(link)
                 except:
                     print("no href found")
             
             try:
-                self.bot.button_click('//a[@class="btn paging-next"]')
+                self.bot.button_click('//a[@aria-label="next page"]')
             except NoSuchElementException:
                 print("end of list")
                 break
