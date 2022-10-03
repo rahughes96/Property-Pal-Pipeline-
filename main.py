@@ -19,6 +19,7 @@ if __name__ == "__main__":
     bot.download_images(my_dict, Postcode)
     print("images downloaded")
     file_name = (f"/Users/ryanhughes/Desktop/Aicore/Proppal/Property-Pal-Pipeline-/raw_data/{Postcode}.json")
+    bot.upload_file_to_S3(file_name, "propertypal", file_name[-8:-5])
 
 
     
