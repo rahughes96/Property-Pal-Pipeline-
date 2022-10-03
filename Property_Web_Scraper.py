@@ -3,6 +3,10 @@ import uuid
 import os
 import urllib
 import json
+import logging
+import sqlalchemy
+import boto3
+from botocore.exceptions import ClientError
 import pandas as pd
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
@@ -10,9 +14,6 @@ from selenium.common.exceptions import NoSuchElementException
 from json import JSONEncoder
 from uuid import UUID
 from Scraper import Scraper
-
-global Postcode
-Postcode = input("Please enter the postcode you would like to scrape:")
 
 # NAVIGATE THE WEBSITE
 
@@ -23,13 +24,19 @@ class PropertyScraper(Scraper):
     def __init__(self, url: str = 'https://www.propertypal.com'):
         self.scraper = Scraper() 
 
-    def login(self):
+    def which_postcode(self):
+        Postcode = input("Please enter the postcode you would like to scrape:")
+        return Postcode
+
+    def login(self, Postcode):
 
         """
 
         This function logs in to the given URL and accepts the cookies prompt
 
-        
+        Attributes:
+            Postcode (str): The postcode we are going to scrape 
+
         """
 
         self.scraper.button_click('//*[@id="__next"]/div[1]/nav[1]/li/button')
@@ -43,9 +50,9 @@ class PropertyScraper(Scraper):
         time.sleep(2)
         logo = self.scraper.driver.find_element_by_xpath('//*[@id="__next"]/div[1]/nav[1]/a')
         logo.click() 
-        self.scraper.search_word('//*[@id="main"]/div[1]/div/div[15]/form/div[1]/input', Postcode)
+        self.scraper.search_word('//input[@type="search"]', Postcode)
         time.sleep(2)
-        rent_button = self.scraper.driver.find_element_by_xpath('//*[@id="main"]/div[1]/div/div[15]/form/div[2]/button[2]')
+        rent_button = self.scraper.driver.find_element_by_xpath('//button[@data-testid="forRentButton"]')
         rent_button.click()
         time.sleep(0.5)
 
@@ -117,7 +124,7 @@ class PropertyScraper(Scraper):
             self.scraper.driver.get(link)
             prop_dict["Link"].append(link)
             time.sleep(0.5)
-            summary = self.scraper.driver.find_element(By.XPATH, '//p[@class="typography__Text-sc-11tz8h0-4 ghGziD"]')
+            summary = self.scraper.driver.find_element(By.XPATH, '//p[@class="sc-11tz8h0-4 FViVo"]')
             prop_dict["Summary"].append(summary.text)
             time.sleep(0.5)
             address = self.scraper.driver.find_element(By.XPATH, '//*[@id="main"]/div[2]/div[2]/div[2]/div/div[1]/div[1]/h1')
@@ -144,7 +151,7 @@ class PropertyScraper(Scraper):
 
 #We store the images in a seperate folder
 
-    def download_images(self, my_dict):
+    def download_images(self, my_dict, Postcode):
         """
 
         This function takes the dictionary and slices out the photo links from it, downloads
@@ -152,12 +159,13 @@ class PropertyScraper(Scraper):
 
         Attributes:
             my_dict (dict): Dictionary of all the information scraped from our given website.
+            Postcode (str): The postcode we are going to scrape
         
         """
 
         self._my_dict = my_dict
-        os.mkdir(f"/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/Property_Photos/{Postcode}")
-        image_directory = os.path.dirname(f"/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/Property_Photos/{Postcode}/")
+        os.mkdir(f"/Users/ryanhughes/Desktop/Aicore/Proppal/Property-Pal-Pipeline-/Property_Photos/{Postcode}")
+        image_directory = os.path.dirname(f"/Users/ryanhughes/Desktop/Aicore/Proppal/Property-Pal-Pipeline-/Property_Photos/{Postcode}/")
         img_link_ct= -1
         for img_list in my_dict["Image links"]:
             img_link_ct += 1
@@ -176,13 +184,14 @@ class PropertyScraper(Scraper):
 
 #We take our dictionary and save it as a json file in a seperate folder
 
-    def store_data(self, my_dict):
+    def store_data_locally(self, my_dict, Postcode):
         """
 
         This function takes the dictionary and stores the information in a json file
 
         Attributes:
             my_dict (dict): Dictionary of all the information scraped from our given website.
+            Postcode (str): The postcode we are going to scrape
         
         """
         self._my_dict = my_dict
@@ -196,8 +205,47 @@ class PropertyScraper(Scraper):
             return old_default(self, obj)
         JSONEncoder.default = new_default
 
-        with open(f'/Users/ryanhughes/Desktop/Aicore/Property-Pal-Pipeline-/raw_data/{Postcode}.json', 'w') as f:json.dump(my_dict, f, indent = 4)
+        with open(f'/Users/ryanhughes/Desktop/Aicore/Proppal/Property-Pal-Pipeline-/raw_data/{Postcode}.json', 'w') as f:json.dump(my_dict, f, indent = 4)
         df = pd.DataFrame(my_dict)
-        return df
+        file_name = (f"/Users/ryanhughes/Desktop/Aicore/Proppal/Property-Pal-Pipeline-/raw_data/{Postcode}.json")
+        return file_name
 
 
+    def upload_file_to_S3(self, file_location, bucket, object_name = None):
+
+        """
+
+        This function uploads the data to an S3 bucket on AWS
+
+        Attributes:
+            file_location (str): String describing the path to the file
+            Bucket (str): name of the S3 bucket were storing into
+            object_name (str): name of the object that wil appear in S3
+        
+        """
+
+        if object_name is None:
+            object_name = os.path.basename(file_location)
+        
+        s3 = boto3.client('s3')
+        try:
+            with open(file_location, "rb") as f:
+                s3.upload_fileobj(f, bucket, object_name)
+        except ClientError as e:
+            logging.error(e)
+            return False
+        return True
+
+    def upload_to_RDS(self, dataframe, objectname):
+        """
+
+        This function Uploads the file to a relational database
+
+        Attributes:
+            dataframe (pandas.core.frame.DataFrame): Dataframe of all the properties in that postcode
+            object_name (str): name of the object that wil appear in RDS
+        
+        """
+
+        engine = sqlalchemy.create_engine("postgresql://postgres:Smalls321!@propertypal2.cowjmhz4f5fa.eu-west-2.rds.amazonaws.com:5432")
+        dataframe.to_sql(objectname, engine, if_exists = "fail")
