@@ -1,12 +1,21 @@
 import pandas as pd
+import json
 from Property_Web_Scraper import PropertyScraper
 
 if __name__ == "__main__":
+    with open('credentials.json') as cred:
+        credentials = json.load(cred)
+    RDS_HOST = credentials['RDS_HOST']
+    RDS_PASSWORD = credentials['RDS_PASSWORD']
+    RDS_PORT = credentials['RDS_PORT']
+    Property_Pal_Username = credentials["PROPERTY_PAL_USERNAME"]
+    Property_Pal_Password = credentials["PROPERTY_PAL_PASSWORD"]
+
     print("lets go")
     bot = PropertyScraper()
     Postcode = bot.which_postcode()
     print('starting...')
-    bot.login(Postcode)
+    bot.login(Postcode, Property_Pal_Username, Property_Pal_Password)
     print('logging in...')
     list_links = bot.get_links()
     print("links attained")
@@ -19,26 +28,29 @@ if __name__ == "__main__":
     bot.download_images(my_dict, Postcode)
     print("images downloaded")
     file_name = (f"/Users/ryanhughes/Desktop/Aicore/Proppal/Property-Pal-Pipeline-/raw_data/{Postcode}.json")
-    bot.upload_file_to_S3(file_name, "propertypal", file_name[-8:-5])
 
 
     
     while True:
-        local_or_S3 = input("Would you like to save data to your local drive or upload to RDS? pleae type 'local' or 'RDS':")
-        if local_or_S3 == "local":
+        local_or_RDS = input("Would you like to save data to your local drive or upload to RDS? pleae type 'local' or 'RDS':")
+        if local_or_RDS == "local":
 
             bot.store_data_locally(my_dict, Postcode)
             print("data Stored locally")
+            bot.upload_file_to_S3(file_name, "propertypalbucket", file_name[-8:-5])
+            print("data uploaded to S3")
             break
 
-        elif local_or_S3 == "RDS":
+        elif local_or_RDS == "RDS":
 
-            bot.upload_file_to_RDS(dataframe, file_name[-8:-5])
+            bot.upload_to_RDS(dataframe, file_name[-8:-5], RDS_PASSWORD, RDS_HOST, RDS_PORT)
             print("data uploaded to RDS")
             break
 
         else:
             print("Im sorry, I didnt understand :S")
+    
+
         
     print("finished")
     

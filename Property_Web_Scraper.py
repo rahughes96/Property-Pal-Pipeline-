@@ -28,23 +28,25 @@ class PropertyScraper(Scraper):
         Postcode = input("Please enter the postcode you would like to scrape:")
         return Postcode
 
-    def login(self, Postcode):
+    def login(self, Postcode, Username, Password):
 
         """
 
         This function logs in to the given URL and accepts the cookies prompt
 
         Attributes:
-            Postcode (str): The postcode we are going to scrape 
+            Postcode (str): The postcode we are going to scrape
+            Username (str): The username we need to login (email address) 
+            Password (str): password used to login
 
         """
 
-        self.scraper.button_click('//*[@id="__next"]/div[1]/nav[1]/li/button')
+        self.scraper.button_click('//p[@class="sc-11tz8h0-4 bplBgY"]')
         time.sleep(0.5)
-        self.scraper.button_click('//*[@id="__next"]/div[1]/nav[1]/li/ul/li[1]/a')
+        self.scraper.button_click('//a[@data-testid="loginLink"]')
         time.sleep(0.5)
-        self.scraper.search_word('//input[@placeholder="Email address"]','sopranotony233@gmail.com')
-        self.scraper.search_word('//input[@placeholder="Password"]','sopranotony321')
+        self.scraper.search_word('//input[@placeholder="Email address"]',Username)
+        self.scraper.search_word('//input[@placeholder="Password"]',Password)
         enter_button = self.scraper.driver.find_element_by_xpath('//*[@id="tabs--1--panel--0"]/div/div[2]/form/div[3]/button')
         enter_button.click()
         time.sleep(2)
@@ -236,7 +238,7 @@ class PropertyScraper(Scraper):
             return False
         return True
 
-    def upload_to_RDS(self, dataframe, objectname):
+    def upload_to_RDS(self, dataframe, objectname, Password, Host, Port):
         """
 
         This function Uploads the file to a relational database
@@ -244,8 +246,11 @@ class PropertyScraper(Scraper):
         Attributes:
             dataframe (pandas.core.frame.DataFrame): Dataframe of all the properties in that postcode
             object_name (str): name of the object that wil appear in RDS
+            Password (str): password of the RDS
+            Host (str): Host of the RDS
+            Port(str): Port of the RDS
         
         """
 
-        engine = sqlalchemy.create_engine("postgresql://postgres:Smalls321!@propertypal2.cowjmhz4f5fa.eu-west-2.rds.amazonaws.com:5432")
+        engine = sqlalchemy.create_engine(f"postgresql://postgres:{Password}@{Host}:{Port}")
         dataframe.to_sql(objectname, engine, if_exists = "fail")
