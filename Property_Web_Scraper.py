@@ -4,6 +4,7 @@ import os
 import urllib
 import json
 import logging
+import requests
 import sqlalchemy
 import boto3
 from botocore.exceptions import ClientError
@@ -153,7 +154,7 @@ class PropertyScraper(Scraper):
 
 #We store the images in a seperate folder
 
-    def download_images(self, my_dict, Postcode):
+    def download_images(self, my_dict, Postcode, Bucket_name):
         """
 
         This function takes the dictionary and slices out the photo links from it, downloads
@@ -179,6 +180,14 @@ class PropertyScraper(Scraper):
                     with open(f"{image_directory}/{my_dict['fr-id'][img_link_ct]}_{str(img_ct)}.jpg", "wb") as f:
                         with urllib.request.urlopen(req) as r:
                             f.write(r.read())
+                    
+                    r = requests.get(url, steam=True)
+                    session = boto3.Session()
+                    s3 = session.resource('s3')
+                    bucket = s3.Bucket(Bucket_name)
+                    bucket.upload_fileobj(r.raw, f"{my_dict['fr-id'][img_link_ct]}_{str(img_ct)}")
+
+
                 except IndexError:
                     pass 
 

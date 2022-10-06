@@ -10,6 +10,7 @@ if __name__ == "__main__":
     RDS_PORT = credentials['RDS_PORT']
     Property_Pal_Username = credentials["PROPERTY_PAL_USERNAME"]
     Property_Pal_Password = credentials["PROPERTY_PAL_PASSWORD"]
+    Bucket_name = credentials["Bucket_Name"]
 
     print("lets go")
     bot = PropertyScraper()
@@ -25,7 +26,7 @@ if __name__ == "__main__":
     dataframe = pd.DataFrame.from_dict(my_dict)
     print("info Attained")
 
-    bot.download_images(my_dict, Postcode)
+    bot.download_images(my_dict, Postcode, Bucket_name)
     print("images downloaded")
     file_name = (f"/Users/ryanhughes/Desktop/Aicore/Proppal/Property-Pal-Pipeline-/raw_data/{Postcode}.json")
 
@@ -37,7 +38,7 @@ if __name__ == "__main__":
 
             bot.store_data_locally(my_dict, Postcode)
             print("data Stored locally")
-            bot.upload_file_to_S3(file_name, "propertypalbucket", file_name[-8:-5])
+            bot.upload_file_to_S3(file_name, Bucket_name, file_name[-8:-5])
             print("data uploaded to S3")
             break
 
