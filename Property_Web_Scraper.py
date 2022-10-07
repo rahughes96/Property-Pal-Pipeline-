@@ -181,7 +181,7 @@ class PropertyScraper(Scraper):
                         with urllib.request.urlopen(req) as r:
                             f.write(r.read())
                     
-                    r = requests.get(url, steam=True)
+                    r = requests.get(url, stream=True)
                     session = boto3.Session()
                     s3 = session.resource('s3')
                     bucket = s3.Bucket(Bucket_name)

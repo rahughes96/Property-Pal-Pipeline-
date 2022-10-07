@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
     
     while True:
-        local_or_RDS = input("Would you like to save data to your local drive or upload to RDS? pleae type 'local' or 'RDS':")
+        local_or_RDS = input("Would you like to save data to your local drive, upload to RDS or both? pleae type 'local', 'RDS' or 'both':")
         if local_or_RDS == "local":
 
             bot.store_data_locally(my_dict, Postcode)
@@ -47,6 +47,16 @@ if __name__ == "__main__":
             bot.upload_to_RDS(dataframe, file_name[-8:-5], RDS_PASSWORD, RDS_HOST, RDS_PORT)
             print("data uploaded to RDS")
             break
+
+        elif local_or_RDS == "both":
+            bot.store_data_locally(my_dict, Postcode)
+            print("Data stored locally")
+            bot.upload_file_to_S3(file_name, Bucket_name, file_name[-8:-5]) 
+
+            bot.upload_to_RDS(dataframe, file_name[-8:-5], RDS_PASSWORD, RDS_HOST, RDS_PORT)
+
+            print("Data uploaded to both RDS and stored locally")
+            break           
 
         else:
             print("Im sorry, I didnt understand :S")
