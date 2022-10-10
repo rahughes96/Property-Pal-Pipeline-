@@ -22,10 +22,14 @@ if __name__ == "__main__":
     print("links attained")
     list_links_length = len(list_links)
     print(f"list links = {list_links_length}")
+
+    print(list_links)
+
     my_dict = bot.get_info(list_links)
     dataframe = pd.DataFrame.from_dict(my_dict)
     print("info Attained")
 
+    print("downloading images...")
     bot.download_images(my_dict, Postcode, Bucket_name)
     print("images downloaded")
     file_name = (f"/Users/ryanhughes/Desktop/Aicore/Proppal/Property-Pal-Pipeline-/raw_data/{Postcode}.json")
@@ -54,8 +58,7 @@ if __name__ == "__main__":
             bot.upload_file_to_S3(file_name, Bucket_name, file_name[-8:-5]) 
 
             bot.upload_to_RDS(dataframe, file_name[-8:-5], RDS_PASSWORD, RDS_HOST, RDS_PORT)
-
-            print("Data uploaded to both RDS and stored locally")
+            print("Data uploaded to RDS")
             break           
 
         else:

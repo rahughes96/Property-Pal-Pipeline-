@@ -64,7 +64,7 @@ class PropertyScraper(Scraper):
 #CREATE THE LIST OF LINKS
 
 #We first find the container with which the links for each page are located, in the form of href
-    def get_links(self):
+    def get_links(self, direct_child = True):
 
         """
 
@@ -76,12 +76,15 @@ class PropertyScraper(Scraper):
         list_links = []
         print("Finding elements...")
         while True:
+            time.sleep(1)
             container = self.scraper.find_container()
+            
             items = container.find_elements(By.XPATH, './li')
-            for i in items:
+
+            for element in items:
                 try:
-                    house = i.find_element(By.XPATH, './/a')
-                    link = house.get_attribute('href')
+                    link = element.find_element(By.XPATH, './/a').get_attribute('href')
+                    
                     list_links.append(link)
                 except:
                     print("no href found")
@@ -91,6 +94,9 @@ class PropertyScraper(Scraper):
             except NoSuchElementException:
                 print("end of list")
                 break
+        print(f"list links length before = {len(list_links)}")
+        print(list_links)
+        list_links = list(set(list_links))
         return list_links
 
 #GRAB INFO FROM EACH LINK AND STORE
