@@ -180,12 +180,13 @@ class PropertyScraper(Scraper):
                     with open(f"{image_directory}/{my_dict['fr-id'][img_link_ct]}_{str(img_ct)}.jpg", "wb") as f:
                         with urllib.request.urlopen(req) as r:
                             f.write(r.read())
-                    
+    
                     r = requests.get(url, stream=True)
                     session = boto3.Session()
                     s3 = session.resource('s3')
                     bucket = s3.Bucket(Bucket_name)
-                    bucket.upload_fileobj(r.raw, f"{my_dict['fr-id'][img_link_ct]}_{str(img_ct)}")
+                    folder_name = f"{Postcode}_images"
+                    bucket.upload_fileobj(r.raw, f"{folder_name}/{my_dict['fr-id'][img_link_ct]}_{str(img_ct)}")
 
 
                 except IndexError:
