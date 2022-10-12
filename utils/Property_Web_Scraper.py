@@ -15,7 +15,7 @@ from selenium.common.exceptions import NoSuchElementException
 from multiprocessing.sharedctypes import Value
 from json import JSONEncoder
 from uuid import UUID
-from utils.Scraper import Scraper
+from Scraper import Scraper
 
 # NAVIGATE THE WEBSITE
 

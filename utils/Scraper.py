@@ -55,7 +55,6 @@ class Scraper:
         
     def accept_cookies(self, xpath:str = '//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]'):
 
-
         try:
             WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, xpath)))
 

@@ -42,6 +42,7 @@ class TestScraper(unittest.TestCase):
         list_links = []
         print("Finding elements...")
         while True:
+            time.sleep(2)
             container = self.bot.find_container()
             items = container.find_elements(By.XPATH, './li')
             for i in items:

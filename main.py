@@ -1,8 +1,11 @@
 import pandas as pd
 import json
-from Property_Web_Scraper import PropertyScraper
+from utils.Property_Web_Scraper import PropertyScraper
 
 if __name__ == "__main__":
+
+# Establish and assign your credentials 
+
     with open('credentials.json') as cred:
         credentials = json.load(cred)
     RDS_HOST = credentials['RDS_HOST']
@@ -12,25 +15,27 @@ if __name__ == "__main__":
     Property_Pal_Password = credentials["PROPERTY_PAL_PASSWORD"]
     Bucket_name = credentials["Bucket_Name"]
 
+#Start up the scraper, login and begin grabbing your desired info
+
     print("lets go")
     bot = PropertyScraper()
     Postcode = bot.which_postcode()
     print('starting...')
     bot.login(Postcode, Property_Pal_Username, Property_Pal_Password)
     print('logging in...')
-    list_links = bot.get_links()
+    list_property_links = bot.get_property_links()
     print("links attained")
-    list_links_length = len(list_links)
+    list_links_length = len(list_property_links)
     print(f"list links = {list_links_length}")
 
-    print(list_links)
+    #Assign all the info into a dataframe
 
-    my_dict = bot.get_info(list_links)
-    dataframe = pd.DataFrame.from_dict(my_dict)
+    property_dict = bot.get_property_info(list_property_links)
+    dataframe = pd.DataFrame.from_dict(property_dict)
     print("info Attained")
 
     print("downloading images...")
-    bot.download_images(my_dict, Postcode, Bucket_name)
+    bot.download_images(property_dict, Postcode, Bucket_name)
     print("images downloaded")
     file_name = (f"/Users/ryanhughes/Desktop/Aicore/Proppal/Property-Pal-Pipeline-/raw_data/{Postcode}.json")
 
@@ -40,7 +45,7 @@ if __name__ == "__main__":
         local_or_RDS = input("Would you like to save data to your local drive, upload to RDS or both? pleae type 'local', 'RDS' or 'both':")
         if local_or_RDS == "local":
 
-            bot.store_data_locally(my_dict, Postcode)
+            bot.store_data_locally(property_dict, Postcode)
             print("data Stored locally")
             bot.upload_file_to_S3(file_name, Bucket_name, file_name[-8:-5])
             print("data uploaded to S3")
@@ -53,7 +58,7 @@ if __name__ == "__main__":
             break
 
         elif local_or_RDS == "both":
-            bot.store_data_locally(my_dict, Postcode)
+            bot.store_data_locally(property_dict, Postcode)
             print("Data stored locally")
             bot.upload_file_to_S3(file_name, Bucket_name, file_name[-8:-5]) 
 
