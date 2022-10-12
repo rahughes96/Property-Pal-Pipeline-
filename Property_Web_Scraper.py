@@ -23,8 +23,8 @@ from utils.Scraper import Scraper
 
 class PropertyScraper(Scraper):
 
-    def __init__(self, url: str = 'https://www.propertypal.com'):
-        self.scraper = Scraper() 
+    def __init__(self, url: str = 'https://www.propertypal.com', Headless: bool = True):
+        super().__init__(url, Headless)
 
     def which_postcode(self):
         Postcode = input("Please enter the postcode you would like to scrape:")

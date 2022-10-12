@@ -1,4 +1,5 @@
 import time
+from selenium import webdriver
 from selenium.webdriver import Chrome
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
@@ -6,13 +7,15 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.chrome.options import Options
 
 global Postcode
 
 #DEFINE CLASS AND FUNCTIONS
 
 class Scraper:
-    def __init__(self, url: str = 'https://www.propertypal.com', accept_cookies_xpath: str = '//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]'):
+    def __init__(self, url: str, Headless: bool):
+       
         """
 
         This function logs in to the given URL and accepts the cookies prompt
@@ -22,9 +25,22 @@ class Scraper:
             xpath (str): The xpath of the "accept cookies" button
         
         """
-        
-        self.driver = Chrome(ChromeDriverManager().install())
+   
+        if Headless:
+            chrome_options = Options()
+            chrome_options.add_argument("--no-sandbox")
+            chrome_options.add_argument("--disable-dev-shm-usage")
+            chrome_options.add_argument('--headless')
+            chrome_options.add_argument("--window-size=1920,1080")
+            chrome_options.add_argument("--start-maximized")
+            self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+             
+        else:
+            self.driver = Chrome(ChromeDriverManager().install())
+
+
         self.driver.get(url)
+        
         try:
             WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, accept_cookies_xpath)))
 
