@@ -15,7 +15,7 @@ from selenium.common.exceptions import NoSuchElementException
 from multiprocessing.sharedctypes import Value
 from json import JSONEncoder
 from uuid import UUID
-from Scraper import Scraper
+from utils.Scraper import Scraper
 
 # NAVIGATE THE WEBSITE
 
@@ -23,8 +23,8 @@ from Scraper import Scraper
 
 class PropertyScraper(Scraper):
 
-    def __init__(self, url: str = 'https://www.propertypal.com'):
-        self.scraper = Scraper() 
+    def __init__(self, url: str = 'https://www.propertypal.com', accept_cookies_xpath: str = '//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]', Headless: bool = True):
+        super().__init__(url, accept_cookies_xpath, Headless)
 
     def which_postcode(self):
         Postcode = input("Please enter the postcode you would like to scrape:")
@@ -43,20 +43,20 @@ class PropertyScraper(Scraper):
 
         """
 
-        self.scraper.button_click('//p[@class="sc-11tz8h0-4 bplBgY"]')
+        self.button_click('//p[@class="sc-11tz8h0-4 bplBgY"]')
         time.sleep(0.5)
-        self.scraper.button_click('//a[@data-testid="loginLink"]')
+        self.button_click('//a[@data-testid="loginLink"]')
         time.sleep(0.5)
-        self.scraper.search_word('//input[@placeholder="Email address"]',Username)
-        self.scraper.search_word('//input[@placeholder="Password"]',Password)
-        enter_button = self.scraper.driver.find_element_by_xpath('//*[@id="tabs--1--panel--0"]/div/div[2]/form/div[3]/button')
+        self.search_word('//input[@placeholder="Email address"]',Username)
+        self.search_word('//input[@placeholder="Password"]',Password)
+        enter_button = self.driver.find_element_by_xpath('//*[@id="tabs--1--panel--0"]/div/div[2]/form/div[3]/button')
         enter_button.click()
         time.sleep(2)
-        logo = self.scraper.driver.find_element_by_xpath('//*[@id="__next"]/div[1]/nav[1]/a')
+        logo = self.driver.find_element_by_xpath('//*[@id="__next"]/div[1]/nav[1]/a')
         logo.click() 
-        self.scraper.search_word('//input[@type="search"]', Postcode)
+        self.search_word('//input[@type="search"]', Postcode)
         time.sleep(2)
-        rent_button = self.scraper.driver.find_element_by_xpath('//button[@data-testid="forRentButton"]')
+        rent_button = self.driver.find_element_by_xpath('//button[@data-testid="forRentButton"]')
         rent_button.click()
         time.sleep(0.5)
 
@@ -78,7 +78,7 @@ class PropertyScraper(Scraper):
         print("Finding elements...")
         while True:
             time.sleep(2)
-            container = self.scraper.find_container()
+            container = self.find_container()
             
             items = container.find_elements(By.XPATH, './li')
 
@@ -91,7 +91,7 @@ class PropertyScraper(Scraper):
                     print("no href found")
             
             try:
-                self.scraper.button_click('//a[@aria-label="next page"]')
+                self.button_click('//a[@aria-label="next page"]')
             except NoSuchElementException:
                 print("end of list")
                 break
@@ -129,18 +129,18 @@ class PropertyScraper(Scraper):
             prop_dict["fr-id"].append(id_pt_1+id_pt_2)
             id = uuid.uuid4()
             prop_dict["id"].append(id)
-            self.scraper.driver.get(link)
+            self.driver.get(link)
             prop_dict["Link"].append(link)
             time.sleep(0.5)
-            summary = self.scraper.driver.find_element(By.XPATH, '//p[@class="sc-11tz8h0-4 FViVo"]')
+            summary = self.driver.find_element(By.XPATH, '//p[@class="sc-11tz8h0-4 FViVo"]')
             prop_dict["Summary"].append(summary.text)
             time.sleep(0.5)
-            address = self.scraper.driver.find_element(By.XPATH, '//*[@id="main"]/div[2]/div[2]/div[2]/div/div[1]/div[1]/h1')
+            address = self.driver.find_element(By.XPATH, '//*[@id="main"]/div[2]/div[2]/div[2]/div/div[1]/div[1]/h1')
             prop_dict["Address"].append(address.text)
             time.sleep(0.5)
-            price = self.scraper.driver.find_element(By.XPATH, '//*[@id="main"]/div[2]/div[2]/div[2]/div/div[1]/div[1]/p[3]/span/strong')
+            price = self.driver.find_element(By.XPATH, '//*[@id="main"]/div[2]/div[2]/div[2]/div/div[1]/div[1]/p[3]/span/strong')
             prop_dict["Price"].append(price.text)
-            img_list = self.scraper.driver.find_elements(By.XPATH, '//div[@class="swiper-wrapper"]//img[1]')
+            img_list = self.driver.find_elements(By.XPATH, '//div[@class="swiper-wrapper"]//img[1]')
             img_links = []
 
             

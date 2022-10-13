@@ -14,7 +14,7 @@ global Postcode
 #DEFINE CLASS AND FUNCTIONS
 
 class Scraper:
-    def __init__(self, url: str, Headless: bool):
+    def __init__(self, url: str, accept_cookies_xpath: str, Headless: bool):
        
         """
 
