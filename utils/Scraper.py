@@ -93,7 +93,7 @@ class Scraper:
         button = self.driver.find_element_by_xpath(xpath)
         button.click()
     
-    def find_container(self, xpath: str = '//ul[@class="sc-1rcidgz-0 jYKFvf"]'):
+    def find_container(self, xpath: str = '//ul[@class="sc-1rcidgz-0 bEhhzC"]'):
 
         """
         
