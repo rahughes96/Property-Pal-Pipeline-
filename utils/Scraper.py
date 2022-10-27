@@ -1,4 +1,3 @@
-import time
 from selenium import webdriver
 from selenium.webdriver import Chrome
 from webdriver_manager.chrome import ChromeDriverManager
