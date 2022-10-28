@@ -1,11 +1,7 @@
 # Property-Pal-Pipeline-
 AiCore project 2
 
-**Milestone 1**
-
-The webpage I chose to scrape is PropertyPal.com, a platform to view local properties for sale and rent. By using the selenium package and Webdriver, PropertyPal has a vast quantity of retrievable data. Every property has a host of information we can scrape including location, size, No. of bedrooms etc. Having recently moved home this seemed like an enjoyable way to build my first data pipeline.
-
-**Milestone 2**
+**Milestone 1 - Set Up the Enviroment**
 
 _Task 1 & 2_
 
@@ -73,7 +69,12 @@ By running the entire body of code through an "if __name__ == __main__" statemen
 
 This opens the webpage, accepts the cookies, searches "BT4" in the rentals category, then grabs all the links from all the properties shown on that page and stores them in the list "list_links".
 
-**Milestone 3**
+
+**Milestone 2 - Decide Which Website you are Going to Collect Data From**
+
+The webpage I chose to scrape is PropertyPal.com, a platform to view local properties for sale and rent. By using the selenium package and Webdriver, PropertyPal has a vast quantity of retrievable data. Every property has a host of information we can scrape including location, size, No. of bedrooms etc. Having recently moved home this seemed like an enjoyable way to build my first data pipeline.
+
+**Milestone 3 - Navigate the website and collect data**
 
 _Task 1_
 
@@ -130,7 +131,7 @@ We then looped through each of the image links and downloaded the photos and sav
 img_ct was used to number each image so we could distinguish multiple images for one property. We also needed another nested loop in order to loop through the links for each property, and gather the images for each link. A try and except method meant we werent getting the error message for when the dictionary ran out of links.
 
 
-**Milestone 4**
+**Milestone 4 - Documentation and Testing**
 
 _Task 1 & 2_
 
@@ -154,4 +155,42 @@ These testing methods were stored in a file named Test_Scraper.py and ran throug
 
 I then used the "python -m test.Test_Scraper" call in my terminal to run the test and checked that all my tests were passing.
 
-**Milestone 5**
+**Milestone 5 - Conatinerise the Scraper**
+
+_Task 1 & 2_
+
+Check all tests are passing, putting a final refactoring on the code before containerising
+
+_Task 3_
+
+in order to run the scraper in headless mode I put it in the __init__ method of the Scraper class as a boolean, like so:
+
+![Screenshot 2022-10-28 at 16 37 56](https://user-images.githubusercontent.com/102994234/198677298-1e1f436b-1980-4976-a724-6d26dd053ae0.png)
+
+This meant that when initialising the Scraper, users can define whether they run it headless or not.
+
+_Task 4_
+
+To Create the Docker image I first had to create a requirements file, that would then be used to install the required packages and libraries.
+
+![Screenshot 2022-10-28 at 16 40 12](https://user-images.githubusercontent.com/102994234/198677794-7fd615c7-eca4-446d-ac90-83e2fd49248a.png)
+
+Then creating the Dockerfile like so:
+
+![Screenshot 2022-10-28 at 16 40 51](https://user-images.githubusercontent.com/102994234/198677937-617dbc1e-bf6c-441b-9ac3-afe581b8eea4.png)
+
+_Task 5_
+
+Then after creating a dockerhub account I pushed the newly made container to dockerhub.
+
+**Milestone 6 - Set up a CI/CD Pipeline for your Image**
+
+_Task 1_
+
+Set up github secrets that contained the dockerhub username as well as one woth te dockerhub access token, generated and retrieved from the my dockerhub account page
+
+_Task 2_
+
+Created a github action, following the instructions on the docker documentation website, that is triffered on a push to the main branch of my repository. This action builds the Docker image and then pushes to my Dockerhub account
+
+
